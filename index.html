@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js" integrity="sha512-asxKqQghC1oBShyhiBwA+YgotaSYKxGP1rcSYTDrB0U6DxwlJjU59B67U8+5/++uFjcuVM8Hh5cokLjZlhm3Vg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+    //-------------------------------------
+
+    var currentTemp = 0;
+    var currentHumi = 0;
+    var currentPres = 0;
+    var currentDate = 0;
+
+    //var pres1 = [];
+    var temp1 = [];
+    var humi1 = [];
+    var createDate1 = [];
+    var chart3;
+
+    var ncmb = new NCMB("74f700395f049a582d4f47f1ec769c75a717a103b1e415a14a8b773f7c134981","8537b87a224152663e759894422916003178e14c1ec91c3fa844dc226be5b515");
+
+    var NcmbClass = ncmb.DataStore("TempViewerData");
+
+    var tempData = new NcmbClass();
+    //-------------------------------------
+    
+    ons.ready(function() {
+      console.log("Onsen UI is ready!");
+
+
+
+
+
+
+
+      tempData
+         //.equalTo("host", "TempViewerData")
+         .order("createDate", true)
+         //.limit(limit)        
+         .fetchAll()
+         .then(function(results){
+              temp1 = [];
+              humi1 = [];
+              //pres1 = [];
+              createDate1 = [];
+              
+            for (var i = 0; i < results.length; i++) {
+              var object = results[i];
+              console.log(object.temp + ":" + object.humi + ":" + object.createDate);
+              temp1.push(object.temp);
+              humi1.push(object.humi);
+              //pres1.push(object.pres);
+              createDate1.push(new Date(object.createDate).getHours() + ":" + new Date(object.createDate).getMinutes());
+            }
+             try{
+                  currentTemp = Math.floor( temp1[0] * Math.pow( 10, 1 ) ) / Math.pow( 10, 1 ) ;
+                  currentHumi = Math.floor( humi1[0] * Math.pow( 10, 1 ) ) / Math.pow( 10, 1 ) ;
+                  //currentPres = Math.floor( pres1[0] * Math.pow( 10, 1 ) ) / Math.pow( 10, 1 ) ;
+                  currentDate = createDate1[0];
+              } catch(e){
+
+              }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    });
+
+    if (ons.platform.isIPhoneX()) {
+      document.documentElement.setAttribute('onsflag-iphonex-portrait', '');
+      document.documentElement.setAttribute('onsflag-iphonex-landscape', '');
+    }
+  </script>
+</head>
+<body>
+  <p><canvas id="mychart"></canvas></p>
+
+  <p><ons-button id="push-button">更新</ons-button></p>
+</body>
+</html>
